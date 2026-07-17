@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { PrismaClient } from '@prisma/client';
 import authRoutes from './routes/auth.js';
 import reviewRoutes from './routes/reviews.js';
 import userRoutes from './routes/users.js';
@@ -9,7 +8,21 @@ import userRoutes from './routes/users.js';
 dotenv.config();
 
 const app = express();
-const prisma = new PrismaClient();
+
+// Demo mode - uses in-memory storage (no database required)
+const DEMO_MODE = true;
+
+// In-memory storage for demo mode
+const demoStorage = {
+  users: new Map(),
+  sessions: new Map(),
+  reviews: new Map(),
+};
+
+// Make demo storage available
+app.locals.demoStorage = demoStorage;
+app.locals.demoMode = DEMO_MODE;
+
 const PORT = process.env.PORT || 3001;
 
 // Middleware
@@ -20,9 +33,6 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Make prisma available to routes
-app.locals.prisma = prisma;
-
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/reviews', reviewRoutes);
@@ -30,7 +40,7 @@ app.use('/api/users', userRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  res.json({ status: 'ok', demoMode: DEMO_MODE, timestamp: new Date().toISOString() });
 });
 
 // Error handling middleware
@@ -38,14 +48,11 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   console.error('Error:', err);
   res.status(err.status || 500).json({
     error: err.message || 'Internal Server Error',
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
   });
 });
 
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 Backend running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`🎯 Demo Mode: ${DEMO_MODE ? 'ON' : 'OFF'}`);
 });
-
-export { prisma };

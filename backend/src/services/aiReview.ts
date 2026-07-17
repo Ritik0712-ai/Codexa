@@ -13,13 +13,23 @@ interface AIReviewResult {
   summary: string;
 }
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Lazy initialize OpenAI client
+let openai: OpenAI | null = null;
+
+function getOpenAI(): OpenAI | null {
+  if (!openai && process.env.OPENAI_API_KEY) {
+    openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+  }
+  return openai;
+}
 
 export async function performAIReview(code: string, language: string): Promise<AIReviewResult> {
-  // If no API key, return a simulated response for demo
-  if (!process.env.OPENAI_API_KEY) {
+  const client = getOpenAI();
+  
+  // If no API key, return simulated response
+  if (!client) {
     return getSimulatedReview(code, language);
   }
   
@@ -48,7 +58,7 @@ Code to review:
 ${code}
 \`\`\``;
 
-    const response = await openai.chat.completions.create({
+    const response = await client.chat.completions.create({
       model: 'gpt-4o',
       messages: [
         {
@@ -82,10 +92,8 @@ ${code}
 }
 
 function getSimulatedReview(code: string, language: string): AIReviewResult {
-  // Simulated response for demo purposes
   const issues: AIReviewIssue[] = [];
   
-  // Check code length
   if (code.length < 50) {
     issues.push({
       severity: 'INFO',
@@ -96,43 +104,40 @@ function getSimulatedReview(code: string, language: string): AIReviewResult {
     });
   }
   
-  // Basic code smell detection
   if (code.includes('function') && code.match(/function\s+\w+\s*\([^)]*\)\s*{[\s\S]{500,}/)) {
     issues.push({
       severity: 'MEDIUM',
       category: 'Complexity',
       issue: 'Large function detected',
-      explanation: 'Functions longer than 50 lines can be difficult to maintain and test.',
-      suggestedFix: 'Consider breaking this function into smaller, more focused functions.',
+      explanation: 'Functions longer than 50 lines can be difficult to maintain.',
+      suggestedFix: 'Consider breaking this function into smaller functions.',
     });
   }
   
-  // Check for comments
   if (!code.includes('//') && !code.includes('#') && !code.includes('/*') && code.length > 200) {
     issues.push({
       severity: 'LOW',
       category: 'Documentation',
       issue: 'Code lacks comments',
-      explanation: 'Well-documented code is easier to maintain and understand.',
-      suggestedFix: 'Add comments explaining complex logic and function purposes.',
+      explanation: 'Well-documented code is easier to maintain.',
+      suggestedFix: 'Add comments explaining complex logic.',
     });
   }
   
-  // Check for hardcoded values
   if (code.match(/\d{5,}/)) {
     issues.push({
       severity: 'LOW',
       category: 'Code Quality',
       issue: 'Possible magic numbers detected',
-      explanation: 'Hardcoded numbers reduce code readability and maintainability.',
-      suggestedFix: 'Use named constants instead of magic numbers.',
+      explanation: 'Hardcoded numbers reduce maintainability.',
+      suggestedFix: 'Use named constants instead.',
     });
   }
   
   return {
     issues,
     summary: issues.length > 0 
-      ? `AI review identified ${issues.length} area(s) for improvement in your ${language} code.`
+      ? `Analysis identified ${issues.length} area(s) for improvement in your ${language} code.`
       : `Your ${language} code looks good! No major issues detected.`,
   };
 }

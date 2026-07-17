@@ -1,14 +1,6 @@
 import { Router, Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
-import { z } from 'zod';
 
 const router = Router();
-const prisma = new PrismaClient();
-
-const updateProfileSchema = z.object({
-  name: z.string().min(2).max(120).optional(),
-  avatarUrl: z.string().url().optional().nullable(),
-});
 
 // Get current user
 router.get('/me', async (req: Request, res: Response) => {
@@ -18,23 +10,25 @@ router.get('/me', async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        avatarUrl: true,
-        role: true,
-        createdAt: true,
-      },
-    });
+    const demoMode = req.app.locals.demoMode;
+    const demoStorage = req.app.locals.demoStorage;
 
-    if (!user) {
+    if (demoMode) {
+      for (const user of demoStorage.users.values()) {
+        if (user.id === userId) {
+          return res.json({
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            createdAt: user.createdAt,
+          });
+        }
+      }
       return res.status(404).json({ error: 'User not found' });
     }
 
-    res.json(user);
+    return res.status(500).json({ error: 'Database not configured' });
   } catch (error) {
     console.error('Get user error:', error);
     res.status(500).json({ error: 'Failed to fetch user' });
@@ -49,29 +43,21 @@ router.put('/me', async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const data = updateProfileSchema.parse(req.body);
+    const { name } = req.body;
+    const demoMode = req.app.locals.demoMode;
+    const demoStorage = req.app.locals.demoStorage;
 
-    const user = await prisma.user.update({
-      where: { id: userId },
-      data: {
-        ...(data.name && { name: data.name }),
-        ...(data.avatarUrl !== undefined && { avatarUrl: data.avatarUrl }),
-      },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        avatarUrl: true,
-        role: true,
-      },
-    });
-
-    res.json(user);
-  } catch (error: any) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: error.errors });
+    if (demoMode) {
+      const user = demoStorage.users.get(userId);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+      user.name = name || user.name;
+      return res.json({ id: user.id, name: user.name, email: user.email, role: user.role });
     }
-    console.error('Update user error:', error);
+
+    return res.status(500).json({ error: 'Database not configured' });
+  } catch (error) {
     res.status(500).json({ error: 'Failed to update user' });
   }
 });
@@ -84,42 +70,44 @@ router.get('/stats', async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const [totalReviews, avgScore, reviewsByLanguage, recentActivity] = await Promise.all([
-      prisma.review.count({ where: { userId } }),
-      prisma.review.aggregate({
-        where: { userId, status: 'COMPLETED' },
-        _avg: { overallScore: true },
-      }),
-      prisma.review.groupBy({
-        by: ['language'],
-        where: { userId },
-        _count: true,
-      }),
-      prisma.review.findMany({
-        where: { userId },
-        orderBy: { createdAt: 'desc' },
-        take: 5,
-        select: {
-          id: true,
-          language: true,
-          overallScore: true,
-          status: true,
-          createdAt: true,
-        },
-      }),
-    ]);
+    const demoMode = req.app.locals.demoMode;
+    const demoStorage = req.app.locals.demoStorage;
 
-    res.json({
-      totalReviews,
-      avgScore: Math.round(avgScore._avg.overallScore || 0),
-      reviewsByLanguage: reviewsByLanguage.map(l => ({
-        language: l.language,
-        count: l._count,
-      })),
-      recentActivity,
-    });
+    if (demoMode) {
+      const userReviews: any[] = [];
+      for (const review of demoStorage.reviews.values()) {
+        if (review.userId === userId) {
+          userReviews.push(review);
+        }
+      }
+
+      const completedReviews = userReviews.filter(r => r.status === 'COMPLETED');
+      const avgScore = completedReviews.length > 0
+        ? Math.round(completedReviews.reduce((sum, r) => sum + r.overallScore, 0) / completedReviews.length)
+        : 0;
+
+      // Group by language
+      const byLanguage: Record<string, number> = {};
+      for (const review of completedReviews) {
+        byLanguage[review.language] = (byLanguage[review.language] || 0) + 1;
+      }
+
+      return res.json({
+        totalReviews: completedReviews.length,
+        avgScore,
+        reviewsByLanguage: Object.entries(byLanguage).map(([language, count]) => ({ language, count })),
+        recentActivity: completedReviews.slice(0, 5).map(r => ({
+          id: r.id,
+          language: r.language,
+          overallScore: r.overallScore,
+          status: r.status,
+          createdAt: r.createdAt,
+        })),
+      });
+    }
+
+    return res.status(500).json({ error: 'Database not configured' });
   } catch (error) {
-    console.error('Get stats error:', error);
     res.status(500).json({ error: 'Failed to fetch stats' });
   }
 });
