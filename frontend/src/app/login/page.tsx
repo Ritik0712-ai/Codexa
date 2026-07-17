@@ -23,7 +23,7 @@ export default function LoginPage() {
       await login(email, password);
       router.push('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Login failed. Please try again.');
+      setError(err.response?.data?.error || 'Login failed');
     } finally {
       setLoading(false);
     }
@@ -32,7 +32,6 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-[#0F172A] flex items-center justify-center px-4">
       <div className="w-full max-w-md">
-        {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 mb-6">
             <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-cyan-500 rounded-xl flex items-center justify-center">
@@ -41,11 +40,10 @@ export default function LoginPage() {
             <span className="text-2xl font-bold text-white">Codexa</span>
           </Link>
           <h1 className="text-2xl font-bold text-white">Welcome back</h1>
-          <p className="text-gray-400 mt-2">Sign in to continue to your dashboard</p>
+          <p className="text-gray-400 mt-2">Sign in to continue</p>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="card p-8">
+        <form onSubmit={handleSubmit} className="bg-[#111827] border border-white/10 rounded-xl p-8">
           {error && (
             <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-lg mb-6 text-sm">
               {error}
@@ -74,16 +72,12 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="input"
-                placeholder="••••••••"
+                placeholder="********"
                 required
               />
             </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn-primary w-full py-3"
-            >
+            <button type="submit" disabled={loading} className="btn-primary w-full py-3">
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
               Sign In
             </button>
@@ -91,10 +85,7 @@ export default function LoginPage() {
         </form>
 
         <p className="text-center mt-6 text-gray-400 text-sm">
-          Don't have an account?{' '}
-          <Link href="/register" className="text-indigo-400 hover:text-indigo-300">
-            Sign up
-          </Link>
+          No account? <Link href="/register" className="text-indigo-400">Sign up</Link>
         </p>
       </div>
     </div>

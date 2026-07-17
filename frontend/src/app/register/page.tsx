@@ -19,24 +19,20 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
     }
-
     if (password.length < 8) {
       setError('Password must be at least 8 characters');
       return;
     }
-
     setLoading(true);
-
     try {
       await register(name, email, password);
       router.push('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Registration failed. Please try again.');
+      setError(err.response?.data?.error || 'Registration failed');
     } finally {
       setLoading(false);
     }
@@ -45,7 +41,6 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-[#0F172A] flex items-center justify-center px-4">
       <div className="w-full max-w-md">
-        {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 mb-6">
             <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-cyan-500 rounded-xl flex items-center justify-center">
@@ -53,12 +48,11 @@ export default function RegisterPage() {
             </div>
             <span className="text-2xl font-bold text-white">Codexa</span>
           </Link>
-          <h1 className="text-2xl font-bold text-white">Create your account</h1>
-          <p className="text-gray-400 mt-2">Start reviewing code with AI power</p>
+          <h1 className="text-2xl font-bold text-white">Create Account</h1>
+          <p className="text-gray-400 mt-2">Start reviewing code with AI</p>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="card p-8">
+        <form onSubmit={handleSubmit} className="bg-[#111827] border border-white/10 rounded-xl p-8">
           {error && (
             <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-lg mb-6 text-sm">
               {error}
@@ -68,61 +62,21 @@ export default function RegisterPage() {
           <div className="space-y-4">
             <div className="form-group">
               <label htmlFor="name" className="form-label">Name</label>
-              <input
-                type="text"
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="input"
-                placeholder="John Doe"
-                required
-              />
+              <input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} className="input" placeholder="John Doe" required />
             </div>
-
             <div className="form-group">
               <label htmlFor="email" className="form-label">Email</label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="input"
-                placeholder="you@example.com"
-                required
-              />
+              <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} className="input" placeholder="you@example.com" required />
             </div>
-
             <div className="form-group">
               <label htmlFor="password" className="form-label">Password</label>
-              <input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="input"
-                placeholder="••••••••"
-                required
-              />
+              <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} className="input" placeholder="********" required />
             </div>
-
             <div className="form-group">
               <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
-              <input
-                type="password"
-                id="confirmPassword"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="input"
-                placeholder="••••••••"
-                required
-              />
+              <input type="password" id="confirmPassword" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="input" placeholder="********" required />
             </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn-primary w-full py-3"
-            >
+            <button type="submit" disabled={loading} className="btn-primary w-full py-3">
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
               Create Account
             </button>
@@ -130,10 +84,7 @@ export default function RegisterPage() {
         </form>
 
         <p className="text-center mt-6 text-gray-400 text-sm">
-          Already have an account?{' '}
-          <Link href="/login" className="text-indigo-400 hover:text-indigo-300">
-            Sign in
-          </Link>
+          Have account? <Link href="/login" className="text-indigo-400">Sign in</Link>
         </p>
       </div>
     </div>
