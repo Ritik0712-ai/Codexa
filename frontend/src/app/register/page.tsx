@@ -43,31 +43,31 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[#0F172A] flex items-center justify-center px-4">
       <div className="w-full max-w-md">
+        {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 mb-6">
             <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-cyan-500 rounded-xl flex items-center justify-center">
               <Code2 className="w-6 h-6 text-white" />
             </div>
-            <span className="text-2xl font-bold">Codexa</span>
+            <span className="text-2xl font-bold text-white">Codexa</span>
           </Link>
-          <h1 className="text-2xl font-bold">Create your account</h1>
+          <h1 className="text-2xl font-bold text-white">Create your account</h1>
           <p className="text-gray-400 mt-2">Start reviewing code with AI power</p>
         </div>
 
+        {/* Form */}
         <form onSubmit={handleSubmit} className="card p-8">
           {error && (
-            <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-lg mb-6">
+            <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-lg mb-6 text-sm">
               {error}
             </div>
           )}
 
           <div className="space-y-4">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium mb-2">
-                Name
-              </label>
+            <div className="form-group">
+              <label htmlFor="name" className="form-label">Name</label>
               <input
                 type="text"
                 id="name"
@@ -79,10 +79,8 @@ export default function RegisterPage() {
               />
             </div>
 
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium mb-2">
-                Email
-              </label>
+            <div className="form-group">
+              <label htmlFor="email" className="form-label">Email</label>
               <input
                 type="email"
                 id="email"
@@ -94,10 +92,8 @@ export default function RegisterPage() {
               />
             </div>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium mb-2">
-                Password
-              </label>
+            <div className="form-group">
+              <label htmlFor="password" className="form-label">Password</label>
               <input
                 type="password"
                 id="password"
@@ -109,10 +105,8 @@ export default function RegisterPage() {
               />
             </div>
 
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium mb-2">
-                Confirm Password
-              </label>
+            <div className="form-group">
+              <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
               <input
                 type="password"
                 id="confirmPassword"
@@ -127,7 +121,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary w-full flex items-center justify-center gap-2"
+              className="btn-primary w-full py-3"
             >
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
               Create Account
@@ -135,7 +129,7 @@ export default function RegisterPage() {
           </div>
         </form>
 
-        <p className="text-center mt-6 text-gray-400">
+        <p className="text-center mt-6 text-gray-400 text-sm">
           Already have an account?{' '}
           <Link href="/login" className="text-indigo-400 hover:text-indigo-300">
             Sign in
