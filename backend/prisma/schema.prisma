@@ -1,0 +1,142 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum SourceType {
+  SNIPPET
+  FILE
+}
+
+enum ReviewStatus {
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum Severity {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+  INFO
+}
+
+model User {
+  id           String    @id @default(uuid())
+  name         String    @db.VarChar(120)
+  email        String    @unique @db.VarChar(255)
+  passwordHash String?
+  avatarUrl    String?
+  role         UserRole  @default(USER)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+
+  sessions       Session[]
+  uploadedFiles  UploadedFile[]
+  reviews        Review[]
+  auditLogs      AuditLog[]
+
+  @@index([email])
+}
+
+model Session {
+  id              String   @id @default(uuid())
+  userId          String
+  refreshTokenHash String   @db.Text
+  ipAddress       Inet?
+  userAgent       String?  @db.Text
+  expiresAt       DateTime
+  createdAt       DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+}
+
+model UploadedFile {
+  id          String   @id @default(uuid())
+  userId      String
+  filename    String   @db.VarChar(255)
+  language    String   @db.VarChar(50)
+  storagePath String   @db.Text
+  sizeBytes   BigInt
+  createdAt   DateTime @default(now())
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  review Review?
+
+  @@index([userId])
+}
+
+model Review {
+  id          String       @id @default(uuid())
+  userId      String
+  fileId      String?      @unique
+  sourceType  SourceType
+  language    String       @db.VarChar(50)
+  codeSnippet String?      @db.Text
+  overallScore Int        @default(0)
+  summary     String       @db.Text
+  status      ReviewStatus @default(PROCESSING)
+  createdAt   DateTime     @default(now())
+
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  file       UploadedFile?   @relation(fields: [fileId], references: [id])
+  findings   ReviewFinding[]
+  metrics    ReviewMetric?
+
+  @@index([userId, createdAt(sort: Desc)])
+}
+
+model ReviewFinding {
+  id            String   @id @default(uuid())
+  reviewId      String
+  severity      Severity
+  category      String   @db.VarChar(80)
+  issue         String   @db.Text
+  explanation   String   @db.Text
+  suggestedFix  String?  @db.Text
+  fileName      String?  @db.VarChar(255)
+  lineNumber    Int?
+
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@index([reviewId])
+}
+
+model ReviewMetric {
+  id                  String  @id @default(uuid())
+  reviewId            String  @unique
+  linesOfCode         Int     @default(0)
+  functions           Int     @default(0)
+  classes             Int     @default(0)
+  cyclomaticComplexity Int    @default(0)
+  fileComplexity      Decimal? @db.Decimal(5, 2)
+
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String?
+  action     String   @db.VarChar(100)
+  entityType String   @db.VarChar(50)
+  entityId   String?
+  ipAddress  Inet?
+  createdAt  DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([userId, createdAt(sort: Desc)])
+}
