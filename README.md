@@ -1,279 +1,228 @@
 # Codexa - AI-Powered Code Review Assistant
 
 <div align="center">
-
-![Codexa](https://img.shields.io/badge/Codexa-AI%20Code%20Review-4F46E5?style=for-the-badge&logo=robot&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
-![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=next.js&logoColor=white)
-![Express](https://img.shields.io/badge/Express-000000?style=flat-square&logo=express&logoColor=white)
-![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=flat-square&logo=prisma&logoColor=white)
-
-*A modern full-stack SaaS application that helps developers improve code quality using AI-powered reviews and static code analysis.*
-
-[Features](#-features) • [Tech Stack](#-tech-stack) • [Quick Start](#-quick-start) • [API Reference](#-api-reference) • [Project Structure](#-project-structure) • [Contributing](#-contributing)
-
+  <img src="https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js" alt="Next.js">
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript">
+  <img src="https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white" alt="Express">
+  <img src="https://img.shields.io/badge/Tailwind-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind">
+  <img src="https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white" alt="Prisma">
+  <img src="https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white" alt="OpenAI">
 </div>
 
----
+<br>
 
-## 🎯 Features
+> **Codexa** is an AI-powered code review assistant that helps developers write better, cleaner, and more secure code through instant, actionable feedback powered by GPT-4.
 
-### Core Functionality
-- **🔐 Secure Authentication** - Email/password registration and login with session management
-- **✨ AI-Powered Reviews** - GPT-4 powered code analysis with actionable suggestions
-- **📊 Static Analysis** - Automated detection of code issues, style violations, and potential bugs
-- **📈 Complexity Metrics** - Cyclomatic complexity, lines of code, function counts, and quality scores
-- **💾 Review History** - Save, search, and revisit past code reviews
+## ✨ Features
 
-### User Experience
-- **🎨 Modern Dark UI** - Premium developer-focused interface inspired by Linear and Vercel
-- **📝 Monaco Editor** - IDE-like code editing with syntax highlighting and IntelliSense
-- **⚡ Real-time Processing** - Async review processing with status tracking
-- **📱 Responsive Design** - Fully responsive across desktop, tablet, and mobile
+- 🚀 **Instant Code Analysis** - Get comprehensive reviews in seconds
+- 🤖 **AI-Powered Reviews** - GPT-4 analyzes your code like a senior engineer
+- 🔒 **Security Focused** - Detect vulnerabilities before they reach production
+- 📊 **Static Analysis** - Syntax, style, complexity, and best practices
+- 📈 **Metrics Dashboard** - Track your code quality over time
+- 🌐 **Multi-Language Support** - JavaScript, TypeScript, Python, Java, C++, Go, Rust, and more
 
-### Supported Languages
-JavaScript, TypeScript, Python, Java, C++, C, C#, Go, Rust, Ruby, PHP, Swift, Kotlin, SQL, HTML, CSS, JSON, YAML, Markdown
+## 🛠️ Tech Stack
 
----
+### Frontend
+- **Next.js 16** - React framework with App Router
+- **TypeScript** - Type-safe development
+- **Tailwind CSS** - Utility-first styling
+- **Lucide React** - Beautiful icons
 
-## 🛠 Tech Stack
+### Backend
+- **Express.js** - Fast Node.js framework
+- **TypeScript** - Type-safe development
+- **Prisma** - Next-generation ORM
+- **OpenAI API** - GPT-4 for intelligent analysis
 
-| Layer | Technology |
-|-------|------------|
-| **Frontend** | Next.js 14 (App Router), React 19, TypeScript |
-| **Styling** | Tailwind CSS 4 |
-| **Code Editor** | Monaco Editor |
-| **State Management** | React Context + TanStack Query |
-| **Backend** | Express.js, TypeScript |
-| **Database** | PostgreSQL via Prisma ORM |
-| **AI Integration** | OpenAI GPT-4 API |
-| **Authentication** | JWT with refresh tokens |
-| **Validation** | Zod |
-| **Icons** | Lucide React |
-| **Charts** | Recharts |
-
----
+### Database
+- **PostgreSQL** - Relational database for users and reviews
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
 - Node.js 18+
-- PostgreSQL database (local or [Supabase](https://supabase.com))
-- OpenAI API key ([Get one here](https://platform.openai.com/api-keys))
+- npm or yarn
+- PostgreSQL (for production)
+- OpenAI API Key (for AI features)
 
-### Installation
+### Demo Mode (No Setup Required)
+
+The app includes a **demo mode** that works without a database or OpenAI API key:
 
 ```bash
-# Clone the repository
-git clone https://github.com/Ritik0712-ai/Codexa.git
-cd Codexa
-
-# Set up backend
+# Backend
 cd backend
 npm install
-cp .env.example .env
-# Edit .env with your DATABASE_URL and OPENAI_API_KEY
-npx prisma generate
-npx prisma db push
 npm run dev
 
-# Set up frontend (in a new terminal)
+# Frontend (new terminal)
 cd frontend
 npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see the application.
+Visit http://localhost:3000
 
-### Environment Variables
+### Production Setup
 
-**Backend (`backend/.env`):**
+#### 1. Clone the Repository
+
+```bash
+git clone https://github.com/Ritik0712-ai/Codexa.git
+cd Codexa
+```
+
+#### 2. Backend Setup
+
+```bash
+cd backend
+npm install
+
+# Create .env file
+cp .env.example .env
+```
+
+Edit `.env`:
 ```env
-DATABASE_URL=postgresql://user:password@localhost:5432/codexa
-OPENAI_API_KEY=sk-your-api-key
+DATABASE_URL="postgresql://user:password@localhost:5432/codexa"
+OPENAI_API_KEY="sk-your-api-key-here"
 PORT=3001
-FRONTEND_URL=http://localhost:3000
-NODE_ENV=development
+FRONTEND_URL="http://localhost:3000"
 ```
 
-**Frontend (`frontend/.env.local`):**
-```env
-NEXT_PUBLIC_API_URL=http://localhost:3001/api
+#### 3. Database Setup
+
+```bash
+cd backend
+npx prisma generate
+npx prisma db push
 ```
 
----
+#### 4. Frontend Setup
 
-## 📡 API Reference
+```bash
+cd frontend
+npm install
 
-### Authentication
+# Create .env.local
+echo "NEXT_PUBLIC_API_URL=http://localhost:3001" > .env.local
+```
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/auth/register` | POST | Create new account |
-| `/api/auth/login` | POST | Sign in |
-| `/api/auth/logout` | POST | Sign out |
+#### 5. Run the App
 
-### Reviews
+```bash
+# Terminal 1 - Backend
+cd backend
+npm run dev
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/reviews/snippet` | POST | Create review from code snippet |
-| `/api/reviews/upload` | POST | Create review from uploaded file |
-| `/api/reviews` | GET | List all user reviews |
-| `/api/reviews/:id` | GET | Get review details |
-| `/api/reviews/:id` | DELETE | Delete a review |
+# Terminal 2 - Frontend
+cd frontend
+npm run dev
+```
 
-### Users
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/users/me` | GET | Get current user profile |
-| `/api/users/me` | PUT | Update profile |
-| `/api/users/stats` | GET | Get user statistics |
-
----
+Visit http://localhost:3000
 
 ## 📁 Project Structure
 
 ```
-Codexa/
-├── frontend/                    # Next.js 14 frontend application
-│   ├── src/
-│   │   ├── app/                 # App Router pages
-│   │   │   ├── page.tsx        # Landing page
-│   │   │   ├── login/          # Login page
-│   │   │   ├── register/       # Registration page
-│   │   │   └── dashboard/      # Protected dashboard
-│   │   │       ├── page.tsx    # Dashboard home
-│   │   │       ├── history/    # Review history
-│   │   │       ├── new-review/ # Create new review
-│   │   │       ├── review/     # Review details
-│   │   │       └── profile/   # User profile
-│   │   ├── context/            # React contexts (Auth)
-│   │   └── lib/               # Utilities, API client
-│   ├── public/                # Static assets
-│   └── package.json
-│
-├── backend/                    # Express.js API server
-│   ├── src/
-│   │   ├── index.ts           # Server entry point
-│   │   ├── routes/            # API route handlers
-│   │   │   ├── auth.ts        # Authentication routes
-│   │   │   ├── reviews.ts     # Review CRUD routes
-│   │   │   └── users.ts       # User management routes
-│   │   └── services/          # Business logic
-│   │       ├── aiReview.ts    # OpenAI integration
-│   │       ├── staticAnalysis.ts # ESLint-style analysis
-│   │       └── metrics.ts     # Complexity calculations
+AI-code-Review/
+├── backend/
 │   ├── prisma/
 │   │   └── schema.prisma      # Database schema
-│   └── package.json
+│   ├── src/
+│   │   ├── index.ts          # Express server entry
+│   │   ├── routes/
+│   │   │   ├── auth.ts        # Authentication routes
+│   │   │   ├── reviews.ts     # Review API routes
+│   │   │   └── users.ts      # User routes
+│   │   └── services/
+│   │       ├── aiReview.ts    # OpenAI integration
+│   │       ├── metrics.ts     # Code metrics
+│   │       └── staticAnalysis.ts  # Static analysis
+│   ├── package.json
+│   └── tsconfig.json
 │
-├── Documents/                  # Project documentation
-│   ├── PRD.md                 # Product Requirements
-│   ├── TRD.md                 # Technical Requirements
-│   └── UI_UX_Design.md       # Design specifications
+├── frontend/
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── page.tsx           # Landing page
+│   │   │   ├── login/page.tsx     # Login
+│   │   │   ├── register/page.tsx  # Register
+│   │   │   └── dashboard/
+│   │   │       ├── page.tsx           # Dashboard
+│   │   │       ├── new-review/page.tsx   # Create review
+│   │   │       ├── history/page.tsx      # Review history
+│   │   │       ├── profile/page.tsx      # User profile
+│   │   │       └── review/[id]/page.tsx # Review details
+│   │   ├── context/
+│   │   │   └── AuthContext.tsx   # Auth state
+│   │   └── lib/
+│   │       └── api.ts            # API client
+│   ├── package.json
+│   └── tsconfig.json
 │
-├── .gitignore
-├── README.md
-└── TODO.md                    # Implementation tracking
+└── README.md
 ```
 
----
+## 🔌 API Endpoints
 
-## 🗄 Database Schema
+### Authentication
+- `POST /api/auth/register` - Create account
+- `POST /api/auth/login` - Sign in
+- `POST /api/auth/logout` - Sign out
 
-The application uses PostgreSQL with the following main entities:
+### Reviews
+- `POST /api/reviews/snippet` - Create snippet review
+- `POST /api/reviews/file` - Upload file for review
+- `GET /api/reviews` - List user's reviews
+- `GET /api/reviews/:id` - Get review details
+- `DELETE /api/reviews/:id` - Delete review
 
-- **User** - User accounts with authentication
-- **Session** - Active login sessions
-- **Review** - Code review records
-- **ReviewFinding** - Individual issues found during review
-- **ReviewMetric** - Complexity and quality metrics
-- **UploadedFile** - File upload tracking
-- **AuditLog** - Security and audit trail
+### Users
+- `GET /api/users/me` - Get current user
+- `GET /api/users/stats` - Get user statistics
 
----
+## 🎨 Screenshots
 
-## 🔒 Security Features
+| Landing Page | Dashboard | Code Review |
+|-------------|-----------|-------------|
+| Clean, modern landing page | Stats and recent activity | Issues with severity levels |
 
-- Password hashing with bcrypt (12 rounds)
-- JWT-based authentication with refresh tokens
-- Input validation with Zod
-- SQL injection protection via Prisma ORM
-- CORS policy enforcement
-- Rate limiting ready
-- Audit logging
+## 🔒 Environment Variables
 
----
+### Backend (.env)
 
-## 📈 Complexity Metrics
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `DATABASE_URL` | PostgreSQL connection string | Yes (production) |
+| `OPENAI_API_KEY` | OpenAI API key for GPT-4 | Yes (production) |
+| `PORT` | Server port | No (default: 3001) |
+| `FRONTEND_URL` | Frontend URL for CORS | No (default: http://localhost:3000) |
 
-The application calculates:
+### Frontend (.env.local)
 
-- **Lines of Code (LOC)** - Total lines analyzed
-- **Functions** - Number of functions detected
-- **Classes** - Number of classes detected
-- **Cyclomatic Complexity** - Code path complexity
-- **File Complexity** - Overall complexity score (0-100)
-
----
-
-## 🌐 Deployment
-
-### Frontend (Vercel)
-
-```bash
-cd frontend
-vercel
-```
-
-### Backend (Render/Railway)
-
-```bash
-cd backend
-# Connect to Render/Railway via GitHub
-# Set environment variables in dashboard
-# Deploy
-```
-
----
-
-## 📖 Documentation
-
-- [Product Requirements Document](./Documents/PRD.md)
-- [Technical Requirements Document](./Documents/TRD.md)
-- [UI/UX Design Brief](./Documents/UI_UX_Design.md)
-- [2-Day Implementation Plan](./Documents/2_Day_Plan.md)
-
----
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
----
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `NEXT_PUBLIC_API_URL` | Backend API URL | No (default: http://localhost:3001) |
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License - feel free to use this project for learning and development.
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📧 Contact
+
+- GitHub: [@Ritik0712-ai](https://github.com/Ritik0712-ai)
+- Project Link: [https://github.com/Ritik0712-ai/Codexa](https://github.com/Ritik0712-ai/Codexa)
 
 ---
 
-## 👤 Author
-
-**Ritik Agarwal**
-
-Built with ❤️ for the developer community
-
----
-
-## ⭐ Show Your Support
-
-If this project helped you, please give it a star! It helps the project grow and motivates me to keep improving it.
-
+<div align="center">
+  <strong>Built with ❤️ for developers who care about code quality</strong>
+</div>
